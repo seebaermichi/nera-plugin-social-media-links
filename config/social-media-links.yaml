@@ -1,0 +1,10 @@
+social_media_links:
+  - name: facebook
+    href: https://facebook.com
+    icon: <i class="fab fa-facebook-square"></i>
+  - name: twitter
+    href: https://twitter.com
+    icon: <i class="fab fa-twitter-square"></i>
+  - name: linkedIn
+    href: https://linkedin.com
+    icon: <i class="fab fa-linkedin"></i>
