@@ -1,16 +1,55 @@
 {
-    "name": "social-media-links",
-    "version": "1.0.0",
-    "description": "A plugin for static side generator nera to create social media links.",
+    "name": "@nera-static/plugin-social-media-links",
+    "version": "2.0.0",
+    "description": "A plugin for the Nera static site generator to create social media links with configurable icons and styling.",
     "main": "index.js",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+    "type": "module",
+    "exports": {
+        ".": "./index.js"
     },
-    "keywords": [],
-    "author": "“Michael <micha.becker79@gmail.com> (https://github.com/seebaermichi)",
-    "license": "ISC",
+    "bin": {
+        "publish-template": "./bin/publish-template.js"
+    },
+    "scripts": {
+        "test": "vitest",
+        "lint": "eslint ."
+    },
+    "files": [
+        "bin",
+        "config",
+        "index.js",
+        "views"
+    ],
+    "keywords": [
+        "nera",
+        "nera-plugin",
+        "static-site-generator",
+        "social-media",
+        "social-links",
+        "fontawesome",
+        "icons",
+        "jamstack"
+    ],
+    "author": "Michael Becker",
+    "license": "MIT",
     "repository": {
         "type": "git",
         "url": "https://github.com/seebaermichi/nera-plugin-social-media-links"
-    }
+    },
+    "bugs": {
+        "url": "https://github.com/seebaermichi/nera-plugin-social-media-links/issues"
+    },
+    "homepage": "https://github.com/seebaermichi/nera-plugin-social-media-links#readme",
+    "dependencies": {
+        "@nera-static/plugin-utils": "^1.1.0"
+    },
+    "engines": {
+        "node": ">=18"
+    },
+    "devDependencies": {
+        "eslint": "^9.31.0",
+        "husky": "^9.1.7",
+        "vitest": "^3.2.4"
+    },
+    "sideEffects": false
 }

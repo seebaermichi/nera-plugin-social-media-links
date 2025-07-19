@@ -1,3 +1,8 @@
-each link in app.socialMediaLinks
-    a(href=link.href)
-        | !{ link.icon }
+if app.socialMediaLinks && app.socialMediaLinks.length > 0
+    nav.social-media-links
+        ul.social-media-links__list
+            each link in app.socialMediaLinks
+                li.social-media-links__item
+                    a.social-media-links__link(href=link.href, title=link.name, target="_blank", rel="noopener noreferrer")
+                        span.social-media-links__icon !{link.icon}
+                        span.social-media-links__label #{link.name}

@@ -1,17 +1,21 @@
-const { getConfig } = require('../plugin-helper')
+import { getConfig } from '@nera-static/plugin-utils'
+import path from 'path'
 
-module.exports = (() => {
-    const config = getConfig(`${__dirname}/config/social-media-links.yaml`)
+const CONFIG_PATH = path.resolve(
+    process.cwd(),
+    'config/social-media-links.yaml'
+)
+const config = getConfig(CONFIG_PATH) || {}
 
-    const getAppData = data => {
-        data.app = Object.assign({}, data.app, {
-            socialMediaLinks: config.social_media_links
-        })
-
+function getAppData(data) {
+    if (!config?.social_media_links) {
         return data.app
     }
 
     return {
-        getAppData
+        ...data.app,
+        socialMediaLinks: config.social_media_links,
     }
-})()
+}
+
+export { getAppData }

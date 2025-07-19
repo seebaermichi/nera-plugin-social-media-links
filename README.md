@@ -1,55 +1,207 @@
-# Social Media Links - Nera plugin
-This is a plugin for the static side generator [Nera](https://github.com/seebaermichi/nera) to create a list of social media links. It will generate links out of a given setup.
-You can define within the `config/social-media-links.yaml` file which properties you want to use for each social media link (see example).  
+# @nera-static/plugin-social-media-links
 
-## Usage
-The first thing you need to do is to place this plugin in the `src/plugins` folder of your Nera project.  
+A plugin for the [Nera](https://github.com/seebaermichi/nera) static site generator that creates social media link navigation with configurable icons and modern styling. Perfect for footer sections, sidebar widgets, or header navigation.
 
-In addition you need to define which properties each social media link should use. Define it in the `config/social-media-links.yaml`, e.g. like this:
+## ✨ Features
+
+-   Configurable social media links with FontAwesome icons
+-   BEM CSS methodology for consistent styling
+-   Accessible markup with ARIA labels and semantic HTML
+-   Template publishing system for easy customization
+-   Modern FontAwesome 6.5.0 integration
+-   Target="\_blank" and security attributes for external links
+-   Lightweight and zero-runtime overhead
+-   Full compatibility with Nera v4.1.0+
+
+## 🚀 Installation
+
+Install the plugin in your Nera project:
+
+```bash
+npm install @nera-static/plugin-social-media-links
+```
+
+Nera will automatically detect the plugin and make social media links available via `app.socialMediaLinks`.
+
+## ⚙️ Configuration
+
+The plugin uses `config/social-media-links.yaml` to define your social media links:
+
 ```yaml
 social_media_links:
-  - name: facebook
-    href: https://facebook.com
-    icon: <i class="fab fa-facebook-square"></i>
-  - name: twitter
-    href: https://twitter.com
-    icon: <i class="fab fa-twitter-square"></i>
-  - name: linkedIn
-    href: https://linkedin.com
-    icon: <i class="fab fa-linkedin"></i>
-
+    - name: Facebook
+      href: https://facebook.com/yourpage
+      icon: <i class="fab fa-facebook" aria-hidden="true"></i>
+    - name: LinkedIn
+      href: https://linkedin.com/company/yourcompany
+      icon: <i class="fab fa-linkedin" aria-hidden="true"></i>
+    - name: Instagram
+      href: https://instagram.com/youraccount
+      icon: <i class="fab fa-instagram" aria-hidden="true"></i>
+    - name: YouTube
+      href: https://youtube.com/c/yourchannel
+      icon: <i class="fab fa-youtube" aria-hidden="true"></i>
+    - name: GitHub
+      href: https://github.com/yourusername
+      icon: <i class="fab fa-github" aria-hidden="true"></i>
 ```
-Now all of these properties will be available in the `app.socialMediaLinks` property in your templates and you can loop through them however you want or include the template which is provided in `views/social-media-links.pug`.
+
+Each social media link can include any attributes you need:
+
+-   **`name`**: Display name for accessibility and labels
+-   **`href`**: Full URL to your social media profile/page
+-   **`icon`**: FontAwesome icon HTML with ARIA attributes
+-   **Additional attributes**: Any other properties you define will be available in the template
+
+## 🧩 Usage
+
+### Access in your templates
+
+The plugin makes social media links available via `app.socialMediaLinks`:
+
 ```pug
-each link in app.socialMediaLinks
-    a(href=link.href)
-        | !{ link.icon }
-
+// Display social media links
+if app.socialMediaLinks && app.socialMediaLinks.length > 0
+    nav.social-media-links
+        ul.social-media-links__list
+            each link in app.socialMediaLinks
+                li.social-media-links__item
+                    a.social-media-links__link(href=link.href, title=link.name, target="_blank", rel="noopener noreferrer")
+                        span.social-media-links__icon !{link.icon}
+                        span.social-media-links__label #{link.name}
 ```
 
-In addition this plugin provides another template `views/fontawesome-cdn-link.pug` which includes the link to the `all.min.css` file of Fontawesome. You can use it to include Fontawesome icons and use them in your templates.
+### Available data structure
 
-## Example
-This is how a simple layout file could look like with the social media links templates included.
+Each item in the social media links contains:
+
+```javascript
+{
+    name: "Facebook",
+    href: "https://facebook.com/yourpage",
+    icon: "<i class=\"fab fa-facebook\" aria-hidden=\"true\"></i>"
+}
+```
+
+## 🛠️ Template Publishing
+
+Use the templates provided by the plugin:
+
+```bash
+npx @nera-static/plugin-social-media-links run publish-template
+```
+
+This copies the templates to:
+
+```
+views/vendor/plugin-social-media-links/
+├── social-media-links.pug
+└── fontawesome-cdn-link.pug
+```
+
+You can then include them in your layouts:
+
 ```pug
-<!DOCTYPE html>
-html(lang=app.lang)
-  head
-    meta(charset="UTF-8")
-    meta(name="viewport", content="width=device-width, initial-scale=1.0")
-    meta(http-equiv="X-UA-Compatible", content="ie=edge")
-    title #{ meta.title } | #{ app.name }
-    meta(name="description", content=`${meta.description || app.description}`)
-    meta(name="keywords", conent=`${meta.keywords || app.keywords}`)
-    meta(name="generator" content=`nera - ${process.env.npm_package_version}`)
-    meta(name="robots" content=`${meta.robots || app.robots}`)
+// Include social media links
+include /views/vendor/plugin-social-media-links/social-media-links
 
-    include ../../src/plugins/social-media-links/views/fontawesome-cdn-link
-
-  body
-    block content
-
-  footer
-    include ../../src/plugins/social-media-links/views/social-media-links
-
+// Include FontAwesome CDN in head
+head
+    include /views/vendor/plugin-social-media-links/fontawesome-cdn-link
 ```
+
+### Template customization
+
+You can customize the copied templates or create your own based on the data structure provided by `app.socialMediaLinks`.
+
+## 🎨 BEM CSS Classes
+
+The default template uses BEM (Block Element Modifier) methodology:
+
+-   `.social-media-links` - Main navigation container
+-   `.social-media-links__list` - Unordered list container
+-   `.social-media-links__item` - Individual list item
+-   `.social-media-links__link` - Social media link
+-   `.social-media-links__icon` - Icon container span
+-   `.social-media-links__label` - Text label span
+
+## 🎯 Use Cases
+
+### Footer Social Links
+
+```pug
+footer.site-footer
+    include /views/vendor/plugin-social-media-links/social-media-links
+```
+
+### Header Navigation
+
+```pug
+header.site-header
+    nav.main-nav
+        // Other navigation
+    include /views/vendor/plugin-social-media-links/social-media-links
+```
+
+### Sidebar Widget
+
+```pug
+aside.sidebar
+    section.widget
+        h3 Follow Us
+        include /views/vendor/plugin-social-media-links/social-media-links
+```
+
+## 🔗 FontAwesome Integration
+
+The plugin includes a CDN link template for FontAwesome 6.5.0:
+
+```pug
+head
+    include /views/vendor/plugin-social-media-links/fontawesome-cdn-link
+```
+
+This adds the necessary CSS for FontAwesome icons with integrity checking and CORS protection.
+
+## 🧪 Development
+
+```bash
+npm install
+npm test
+npm run lint
+```
+
+Tests are powered by [Vitest](https://vitest.dev) and cover:
+
+-   Social media links data structure
+-   Configuration parsing and validation
+-   Template publishing logic and file operations
+-   Error handling for missing configurations
+
+### 🔄 Compatibility
+
+-   **Nera v4.1.0+**: Full compatibility with latest static site generator
+-   **Node.js 18+**: Modern JavaScript features and ES modules
+-   **Plugin Utils v1.1.0+**: Enhanced plugin utilities integration
+-   **FontAwesome 6.5.0+**: Latest icon library with modern icons
+
+### 🏗️ Architecture
+
+This plugin uses the `getAppData()` function to process configuration and make social media links available via `app.socialMediaLinks`. Links are configured via YAML and rendered with semantic HTML and accessibility features.
+
+## 🧑‍💻 Author
+
+Michael Becker  
+[https://github.com/seebaermichi](https://github.com/seebaermichi)
+
+## 🔗 Links
+
+-   [Plugin Repository](https://github.com/seebaermichi/nera-plugin-social-media-links)
+-   [NPM Package](https://www.npmjs.com/package/@nera-static/plugin-social-media-links)
+-   [Nera Static Site Generator](https://github.com/seebaermichi/nera)
+-   [Plugin Documentation](https://github.com/seebaermichi/nera#plugins)
+-   [FontAwesome Icons](https://fontawesome.com/icons)
+
+## 📄 License
+
+MIT
