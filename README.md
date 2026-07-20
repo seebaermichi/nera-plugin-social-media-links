@@ -1,5 +1,8 @@
 # @nera-static/plugin-social-media-links
 
+[![Test](https://github.com/seebaermichi/nera-plugin-social-media-links/actions/workflows/test.yml/badge.svg)](https://github.com/seebaermichi/nera-plugin-social-media-links/actions/workflows/test.yml)
+[![npm version](https://img.shields.io/npm/v/@nera-static/plugin-social-media-links)](https://www.npmjs.com/package/@nera-static/plugin-social-media-links)
+
 A plugin for the [Nera](https://github.com/seebaermichi/nera) static site generator that creates social media link navigation with configurable icons and modern styling. Perfect for footer sections, sidebar widgets, or header navigation.
 
 ## ✨ Features
