@@ -44,6 +44,9 @@
         "url": "https://github.com/seebaermichi/nera-plugin-social-media-links/issues"
     },
     "homepage": "https://github.com/seebaermichi/nera-plugin-social-media-links#readme",
+    "publishConfig": {
+        "access": "public"
+    },
     "dependencies": {
         "@nera-static/plugin-utils": "^1.2.0"
     },
