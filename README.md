@@ -28,30 +28,54 @@ Nera will automatically detect the plugin and make social media links available 
 The plugin uses `config/social-media-links.yaml` to define your social media links:
 
 ```yaml
+# Optional label for the <nav> element, read by screen readers.
+aria_label: Social media
+
 social_media_links:
     - name: Facebook
       href: https://facebook.com/yourpage
       icon: <i class="fab fa-facebook" aria-hidden="true"></i>
+      icon_raw: true
     - name: LinkedIn
       href: https://linkedin.com/company/yourcompany
       icon: <i class="fab fa-linkedin" aria-hidden="true"></i>
+      icon_raw: true
     - name: Instagram
       href: https://instagram.com/youraccount
       icon: <i class="fab fa-instagram" aria-hidden="true"></i>
+      icon_raw: true
     - name: YouTube
       href: https://youtube.com/c/yourchannel
       icon: <i class="fab fa-youtube" aria-hidden="true"></i>
+      icon_raw: true
     - name: GitHub
       href: https://github.com/yourusername
       icon: <i class="fab fa-github" aria-hidden="true"></i>
+      icon_raw: true
 ```
 
 Each social media link can include any attributes you need:
 
 -   **`name`**: Display name for accessibility and labels
 -   **`href`**: Full URL to your social media profile/page
--   **`icon`**: FontAwesome icon HTML with ARIA attributes
+-   **`icon`**: The icon to render. **Escaped by default** — see below
+-   **`icon_raw`**: Set to `true` to inject `icon` as raw HTML instead of
+    escaping it. Required for icon-font markup like the FontAwesome `<i>` tags
+    above, and for inline SVG
 -   **Additional attributes**: Any other properties you define will be available in the template
+
+### Icons and escaping
+
+`icon` is written into the page **escaped** unless the entry also sets
+`icon_raw: true`. Without the opt-in, `<i class="fab fa-github"></i>` renders as
+visible text rather than an icon.
+
+The opt-in is per entry rather than global, so enabling raw HTML for one
+trusted inline SVG does not silently unescape every other icon. Only set it for
+values you author yourself — anything derived from external data should stay
+escaped.
+
+Versions before 2.1.0 injected every icon as raw HTML with no way to opt out.
 
 ## 🧩 Usage
 
@@ -88,7 +112,7 @@ Each item in the social media links contains:
 Use the templates provided by the plugin:
 
 ```bash
-npx @nera-static/plugin-social-media-links run publish-template
+npx nera-social-media-links
 ```
 
 This copies the templates to:
@@ -99,15 +123,24 @@ views/vendor/plugin-social-media-links/
 └── fontawesome-cdn-link.pug
 ```
 
-You can then include them in your layouts:
+Publishing **skips templates that already exist**, so your edits are safe. To
+pull in newer versions and discard your local changes, use
+`npx nera-social-media-links --force`.
+
+The command is also available under its old name, `npx publish-template`, but
+prefer the prefixed one — the generic name collides with any other package that
+claims it.
+
+You can then include them in your layouts. Include paths are relative to the
+including file, so the `../` below assumes a layout in `views/layouts/`:
 
 ```pug
 // Include social media links
-include /views/vendor/plugin-social-media-links/social-media-links
+include ../vendor/plugin-social-media-links/social-media-links
 
 // Include FontAwesome CDN in head
 head
-    include /views/vendor/plugin-social-media-links/fontawesome-cdn-link
+    include ../vendor/plugin-social-media-links/fontawesome-cdn-link
 ```
 
 ### Template customization
@@ -131,7 +164,7 @@ The default template uses BEM (Block Element Modifier) methodology:
 
 ```pug
 footer.site-footer
-    include /views/vendor/plugin-social-media-links/social-media-links
+    include ../vendor/plugin-social-media-links/social-media-links
 ```
 
 ### Header Navigation
@@ -140,7 +173,7 @@ footer.site-footer
 header.site-header
     nav.main-nav
         // Other navigation
-    include /views/vendor/plugin-social-media-links/social-media-links
+    include ../vendor/plugin-social-media-links/social-media-links
 ```
 
 ### Sidebar Widget
@@ -149,7 +182,7 @@ header.site-header
 aside.sidebar
     section.widget
         h3 Follow Us
-        include /views/vendor/plugin-social-media-links/social-media-links
+        include ../vendor/plugin-social-media-links/social-media-links
 ```
 
 ## 🔗 FontAwesome Integration
@@ -158,7 +191,7 @@ The plugin includes a CDN link template for FontAwesome 6.5.0:
 
 ```pug
 head
-    include /views/vendor/plugin-social-media-links/fontawesome-cdn-link
+    include ../vendor/plugin-social-media-links/fontawesome-cdn-link
 ```
 
 This adds the necessary CSS for FontAwesome icons with integrity checking and CORS protection.

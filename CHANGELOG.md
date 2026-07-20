@@ -5,6 +5,74 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2026-07-20
+
+### Added
+
+-   `nera-social-media-links` as a `bin` entry. The old generic
+    `publish-template` name is **kept alongside it**, so nothing breaks, but it
+    squatted that unscoped name in `node_modules/.bin/` where it collides with
+    any other package doing the same. Prefer the prefixed name
+-   `--force` flag, to re-publish templates over an existing
+    `views/vendor/plugin-social-media-links/` and discard local edits
+-   `icon_raw`, a per-entry opt-in for injecting an icon as raw HTML —
+    **see the note below, this changes the default**
+-   `aria_label` config key, rendered as the `<nav>` element's `aria-label` and
+    defaulting to `Social media`. Multiple navigation landmarks on one page were
+    previously indistinguishable to screen readers
+-   a LICENSE file. The package declared MIT without shipping one
+
+### Fixed
+
+-   **`validateNeraProject` was a tautology.** `bin/publish-template.js` read the
+    host's own `package.json` and passed its `name` straight back in as
+    `expectedPackageName`, so the check was `pkg.name === pkg.name` and always
+    passed. Verified: templates published happily into a directory whose package
+    was named `definitely-not-a-nera-project`. The script now passes no override
+    and relies on the project-shape validation from plugin-utils 1.2.0
+-   config is read per invocation instead of at import time, so edits take
+    effect during `npm run dev` without a restart
+-   a `social_media_links` value that is absent, empty, or not a list is ignored
+    instead of being passed through to the template
+-   `getAppData` no longer throws when called without app data
+-   the README's six template includes used `include /views/vendor/...`, which
+    does not resolve: the generator sets pug's `basedir` to `views/`, so the
+    leading `/views/` is doubled into `views/views/vendor/...`. Corrected to the
+    relative `../vendor/...` form
+
+### Changed
+
+-   **`icon` is now escaped by default.** It was injected as raw HTML straight
+    from YAML with no way to opt out. Set `icon_raw: true` on an entry to keep
+    the old behaviour — required for the FontAwesome `<i>` markup the shipped
+    config uses, which has been updated accordingly. The opt-in is per entry, so
+    enabling raw HTML for one trusted inline SVG does not silently unescape
+    every other icon
+-   `@nera-static/plugin-utils` raised to `^1.2.0`
+-   `eslint.config.js` no longer imports the undeclared `@eslint/js`
+-   `vitest.config.js` drops the fleet-anomalous `testTimeout`
+-   `CHANGELOG.md` and `LICENSE` are now included in the published package
+
+### Migration Guide
+
+**Check your icons if you re-publish templates.** This is treated as a minor
+release rather than a major one because `publishTemplates` skips a destination
+that already exists: a site that has already published its templates keeps its
+vendored copy and renders exactly as before, so it cannot regress.
+
+But if you re-publish with `--force`, or publish for the first time, the new
+template escapes `icon` by default. Any entry whose icon is HTML — which is all
+of them if you copied the shipped config — needs `icon_raw: true` added, or the
+markup will render as visible text:
+
+```yaml
+social_media_links:
+    - name: GitHub
+      href: https://github.com/yourusername
+      icon: <i class="fab fa-github" aria-hidden="true"></i>
+      icon_raw: true # <- add this
+```
+
 ## [2.0.0] - 2025-07-19
 
 ### Breaking Changes

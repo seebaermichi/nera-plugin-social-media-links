@@ -1,6 +1,6 @@
 {
     "name": "@nera-static/plugin-social-media-links",
-    "version": "2.0.0",
+    "version": "2.1.0",
     "description": "A plugin for the Nera static site generator to create social media links with configurable icons and styling.",
     "main": "index.js",
     "type": "module",
@@ -8,17 +8,21 @@
         ".": "./index.js"
     },
     "bin": {
-        "publish-template": "./bin/publish-template.js"
+        "publish-template": "./bin/publish-template.js",
+        "nera-social-media-links": "./bin/publish-template.js"
     },
     "scripts": {
         "test": "vitest",
-        "lint": "eslint ."
+        "lint": "eslint .",
+        "prepare": "husky"
     },
     "files": [
         "bin",
         "config",
         "index.js",
-        "views"
+        "views",
+        "CHANGELOG.md",
+        "LICENSE"
     ],
     "keywords": [
         "nera",
@@ -41,7 +45,7 @@
     },
     "homepage": "https://github.com/seebaermichi/nera-plugin-social-media-links#readme",
     "dependencies": {
-        "@nera-static/plugin-utils": "^1.1.0"
+        "@nera-static/plugin-utils": "^1.2.0"
     },
     "engines": {
         "node": ">=18"
@@ -49,6 +53,7 @@
     "devDependencies": {
         "eslint": "^9.31.0",
         "husky": "^9.1.7",
+        "pug": "^3.0.4",
         "vitest": "^3.2.4"
     },
     "sideEffects": false

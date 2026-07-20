@@ -1,16 +1,28 @@
+# Optional label for the <nav> element, read by screen readers.
+# Set this if a page has more than one navigation landmark.
+aria_label: Social media
+
+# `icon` is escaped by default. Set `icon_raw: true` on an entry to inject the
+# value as HTML — required for the icon-font markup below, or for an inline
+# SVG. Only do this for values you author yourself.
 social_media_links:
   - name: Facebook
     href: https://facebook.com/yourpage
     icon: <i class="fab fa-facebook" aria-hidden="true"></i>
+    icon_raw: true
   - name: LinkedIn
     href: https://linkedin.com/company/yourcompany
     icon: <i class="fab fa-linkedin" aria-hidden="true"></i>
+    icon_raw: true
   - name: Instagram
     href: https://instagram.com/youraccount
     icon: <i class="fab fa-instagram" aria-hidden="true"></i>
+    icon_raw: true
   - name: YouTube
     href: https://youtube.com/c/yourchannel
     icon: <i class="fab fa-youtube" aria-hidden="true"></i>
+    icon_raw: true
   - name: GitHub
     href: https://github.com/yourusername
     icon: <i class="fab fa-github" aria-hidden="true"></i>
+    icon_raw: true

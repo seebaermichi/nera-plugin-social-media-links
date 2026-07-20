@@ -1,107 +1,100 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 import fs from 'fs'
+import os from 'os'
 import path from 'path'
+import { execFileSync } from 'child_process'
 import { fileURLToPath } from 'url'
+import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const REPO_ROOT = path.resolve(
+    path.dirname(fileURLToPath(import.meta.url)),
+    '..'
+)
+const SCRIPT_PATH = path.join(REPO_ROOT, 'bin/publish-template.js')
+const SOURCE_DIR = path.join(REPO_ROOT, 'views')
+const TEMPLATES = ['social-media-links.pug', 'fontawesome-cdn-link.pug']
+
+// Runs the real bin script, so it also covers the argument parsing and the
+// validation the script actually performs — which is the point, given that
+// validation used to be a tautology.
+let testDir
+let templatesDir
+
+const run = (...args) =>
+    execFileSync('node', [SCRIPT_PATH, ...args], {
+        cwd: testDir,
+        stdio: 'pipe',
+    }).toString()
+
+beforeEach(() => {
+    testDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nera-social-publish-'))
+    templatesDir = path.join(testDir, 'views/vendor/plugin-social-media-links')
+
+    // A real Nera project shape, which is what validateNeraProject checks for
+    // as of plugin-utils 1.2.0 (D4).
+    fs.writeFileSync(
+        path.join(testDir, 'package.json'),
+        JSON.stringify({ name: 'my-site' })
+    )
+    fs.mkdirSync(path.join(testDir, 'config'), { recursive: true })
+    fs.writeFileSync(path.join(testDir, 'config/app.yaml'), 'lang: en\n')
+    fs.mkdirSync(path.join(testDir, 'pages'), { recursive: true })
+})
+
+afterEach(() => {
+    fs.rmSync(testDir, { recursive: true, force: true })
+})
 
 describe('Template publishing', () => {
-    const testDir = path.resolve(__dirname, '../test-temp')
-    const templatesDir = path.join(
-        testDir,
-        'views/vendor/plugin-social-media-links'
-    )
+    it('publishes every template to the correct directory', () => {
+        run()
 
-    beforeEach(() => {
-        // Create test directory structure
-        if (fs.existsSync(testDir)) {
-            fs.rmSync(testDir, { recursive: true })
+        for (const file of TEMPLATES) {
+            expect(fs.existsSync(path.join(templatesDir, file))).toBe(true)
         }
-        fs.mkdirSync(testDir, { recursive: true })
+    })
 
-        // Create dummy package.json for test
-        fs.writeFileSync(
-            path.join(testDir, 'package.json'),
-            JSON.stringify({ name: 'dummy' })
+    it('ships every template it publishes', () => {
+        for (const file of TEMPLATES) {
+            expect(fs.existsSync(path.join(SOURCE_DIR, file))).toBe(true)
+        }
+    })
+
+    it('skips publishing when templates already exist', () => {
+        fs.mkdirSync(templatesDir, { recursive: true })
+        const target = path.join(templatesDir, 'social-media-links.pug')
+        fs.writeFileSync(target, 'mine')
+
+        expect(run()).toMatch(/Skipping/i)
+        expect(fs.readFileSync(target, 'utf8')).toBe('mine')
+    })
+
+    it('overwrites existing templates when --force is passed', () => {
+        fs.mkdirSync(templatesDir, { recursive: true })
+        const target = path.join(templatesDir, 'social-media-links.pug')
+        fs.writeFileSync(target, 'mine')
+
+        run('--force')
+
+        expect(fs.readFileSync(target, 'utf8')).toBe(
+            fs.readFileSync(
+                path.join(SOURCE_DIR, 'social-media-links.pug'),
+                'utf8'
+            )
         )
     })
 
-    afterEach(() => {
-        // Clean up test directory
-        if (fs.existsSync(testDir)) {
-            fs.rmSync(testDir, { recursive: true })
-        }
-    })
+    it('refuses to publish outside a Nera project', () => {
+        // The old bin passed the host's own package name as
+        // expectedPackageName, so this check was `pkg.name === pkg.name` and
+        // templates could be published into any directory at all.
+        fs.rmSync(path.join(testDir, 'config/app.yaml'))
+        fs.rmSync(path.join(testDir, 'pages'), { recursive: true })
+        fs.writeFileSync(
+            path.join(testDir, 'package.json'),
+            JSON.stringify({ name: 'definitely-not-a-nera-project' })
+        )
 
-    it('publishes templates to the correct directory', async () => {
-        // Change to test directory
-        const originalCwd = process.cwd()
-        process.chdir(testDir)
-
-        try {
-            // Import and run the publishing logic
-            const { publishAllTemplates } = await import(
-                '@nera-static/plugin-utils'
-            )
-            const sourceDir = path.resolve(__dirname, '../views/')
-
-            const result = publishAllTemplates({
-                pluginName: 'plugin-social-media-links',
-                sourceDir,
-                expectedPackageName: 'dummy',
-            })
-
-            expect(result).toBe(true)
-            expect(fs.existsSync(templatesDir)).toBe(true)
-            expect(
-                fs.existsSync(path.join(templatesDir, 'social-media-links.pug'))
-            ).toBe(true)
-            expect(
-                fs.existsSync(
-                    path.join(templatesDir, 'fontawesome-cdn-link.pug')
-                )
-            ).toBe(true)
-        } finally {
-            process.chdir(originalCwd)
-        }
-    })
-
-    it('skips publishing when templates already exist', async () => {
-        // Change to test directory
-        const originalCwd = process.cwd()
-        process.chdir(testDir)
-
-        try {
-            // Create existing templates directory
-            fs.mkdirSync(templatesDir, { recursive: true })
-            const existingContent = 'existing content'
-            fs.writeFileSync(
-                path.join(templatesDir, 'social-media-links.pug'),
-                existingContent
-            )
-
-            const { publishAllTemplates } = await import(
-                '@nera-static/plugin-utils'
-            )
-            const sourceDir = path.resolve(__dirname, '../views/')
-
-            const result = publishAllTemplates({
-                pluginName: 'plugin-social-media-links',
-                sourceDir,
-                expectedPackageName: 'dummy',
-            })
-
-            // publishAllTemplates returns true but skips overwriting existing files
-            expect(result).toBe(true)
-
-            // Verify that existing content was not overwritten
-            const content = fs.readFileSync(
-                path.join(templatesDir, 'social-media-links.pug'),
-                'utf8'
-            )
-            expect(content).toBe(existingContent)
-        } finally {
-            process.chdir(originalCwd)
-        }
+        expect(() => run()).toThrow()
+        expect(fs.existsSync(templatesDir)).toBe(false)
     })
 })

@@ -1,24 +1,18 @@
-import js from '@eslint/js'
-
 export default [
-    js.configs.recommended,
     {
+        ignores: ['node_modules', 'public', 'dist'],
+    },
+    {
+        files: ['**/*.js'],
         languageOptions: {
-            ecmaVersion: 2024,
+            ecmaVersion: 'latest',
             sourceType: 'module',
-            globals: {
-                console: 'readonly',
-                process: 'readonly',
-                Buffer: 'readonly',
-                __dirname: 'readonly',
-                __filename: 'readonly',
-            },
         },
         rules: {
-            'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
-            'no-console': 'off',
-            'prefer-const': 'error',
-            'no-var': 'error',
+            indent: ['error', 4],
+            semi: ['error', 'never'],
+            quotes: ['error', 'single'],
+            'no-unused-vars': ['warn'],
         },
     },
 ]
