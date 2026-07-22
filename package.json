@@ -1,6 +1,6 @@
 {
     "name": "@nera-static/plugin-social-media-links",
-    "version": "2.2.0",
+    "version": "2.2.1",
     "description": "A plugin for the Nera static site generator to create social media links with configurable icons and styling.",
     "main": "index.js",
     "type": "module",

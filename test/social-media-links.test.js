@@ -98,6 +98,37 @@ describe('Social Media Links Plugin', () => {
         expect(getAppData(mockAppData())).not.toHaveProperty('socialMediaLinks')
     })
 
+    it('drops a malformed entry instead of failing the render', () => {
+        // A dangling `-` in the YAML parses to null. It used to reach the
+        // template and throw `Cannot read properties of null (reading 'href')`,
+        // failing the whole site build.
+        writeConfig(
+            [
+                'social_media_links:',
+                '  - name: Facebook',
+                '    href: https://f.example',
+                '  -',
+                '  - https://scalar.example',
+            ].join('\n')
+        )
+
+        const app = getAppData(mockAppData())
+
+        expect(app.socialMediaLinks).toHaveLength(1)
+        expect(app.socialMediaLinks[0].name).toBe('Facebook')
+        expect(() => render(app)).not.toThrow()
+        expect(render(app)).toContain('href="https://f.example"')
+    })
+
+    it('ignores a config whose entries are all malformed', () => {
+        writeConfig('social_media_links:\n  -\n  -\n')
+
+        const app = getAppData(mockAppData())
+
+        expect(app).not.toHaveProperty('socialMediaLinks')
+        expect(render(app)).toBe('')
+    })
+
     it('tolerates being called without app data', () => {
         expect(() => getAppData({})).not.toThrow()
         expect(() => getAppData()).not.toThrow()

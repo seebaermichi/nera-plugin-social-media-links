@@ -5,6 +5,53 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.1] - 2026-07-22
+
+### Fixed
+
+-   **a malformed config entry no longer fails the whole site build.** A
+    dangling `-` in `social_media_links` parses to `null`, reached the template,
+    and threw `Cannot read properties of null (reading 'href')` — a Pug stack
+    trace naming the vendored template rather than the config file that caused
+    it. Entries that are not mappings are now ignored, and a list containing
+    only such entries is treated as no links at all
+-   **the Usage snippet injected every icon as raw HTML.** It used
+    `!{link.icon}` unconditionally, which is the pre-2.1.0 behaviour this
+    README's own escaping section says was removed — copying it made `icon_raw`
+    a no-op and unescaped every entry. It also omitted the `<nav>`'s
+    `aria-label`. Both now match the shipped template
+-   Compatibility block: Node.js was stated as 18+ against an `engines.node` of
+    `>=20.0.0`, and `@nera-static/plugin-utils` as v1.1.0+ against a real
+    dependency range of `^1.2.0`
+-   "Publishing skips templates that already exist" described a per-file check;
+    the skip is on the whole `views/vendor/plugin-social-media-links/`
+    directory, so a template added by a later version is not delivered either
+
+### Added
+
+-   documentation for `aria_label` and `app.socialMediaLinksLabel`, both added
+    in 2.1.0 and never described — the top-level config key was only visible as
+    a comment inside the YAML example, and the `app` value it produces was
+    absent entirely
+-   documentation for `icon_raw` in the data-structure example
+-   a statement that the plugin is inert without `config/social-media-links.yaml`,
+    and that the config shipped in the package is documentation only
+-   a `## 📊 Generated Output` section, a `## 🤝 Contributing` section, and a
+    note that the BEM class names are a public contract
+-   a callout that `--force` is what delivers a template change to an existing
+    site
+
+### Changed
+
+-   the documented include form is now the root-absolute
+    `include /vendor/plugin-social-media-links/…`, which resolves from any
+    depth. It requires Nera v4.3.0+; the relative form is kept for older
+    generators, with its directory-depth assumption stated
+-   README structure aligned with the fleet standard: `## 🎨 Styling` heading,
+    `## 🧩 Compatibility` promoted to a top-level section in canonical position,
+    `## 📦 License`, single-space list bullets, and `npx vitest run` in the
+    Development section instead of the watch-mode `npm test`
+
 ## [2.2.0] - 2026-07-21
 
 ### Changed
