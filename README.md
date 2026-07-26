@@ -5,6 +5,8 @@
 
 A plugin for the [Nera](https://github.com/seebaermichi/nera) static site generator that creates social media link navigation with configurable icons and modern styling. Perfect for footer sections, sidebar widgets, or header navigation.
 
+📖 **Documentation:** [nera.js.org](https://nera.js.org)
+
 ## ✨ Features
 
 - Configurable social media links with FontAwesome icons
@@ -314,6 +316,7 @@ Michael Becker
 
 - [Plugin Repository](https://github.com/seebaermichi/nera-plugin-social-media-links)
 - [NPM Package](https://www.npmjs.com/package/@nera-static/plugin-social-media-links)
+- [Nera Website](https://nera.js.org)
 - [Nera Static Site Generator](https://github.com/seebaermichi/nera)
 - [Plugin Documentation](https://github.com/seebaermichi/nera#plugins)
 - [FontAwesome Icons](https://fontawesome.com/icons)
