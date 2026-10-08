@@ -150,12 +150,18 @@ npx nera-social-media-links
 This copies the templates to:
 
 ```
-views/vendor/plugin-social-media-links/
+theme/views/vendor/plugin-social-media-links/
 ├── social-media-links.pug
 └── fontawesome-cdn-link.pug
 ```
 
-Publishing **skips entirely if `views/vendor/plugin-social-media-links/`
+That is the destination on a site scaffolded with `nera new`, whose views live
+in `theme/views/`. On an older site that renders from a root `views/` folder,
+the command publishes to `views/vendor/plugin-social-media-links/` instead —
+it picks the right destination automatically. Drop the `theme/` prefix from
+the paths in this README on such a site.
+
+Publishing **skips entirely if `theme/views/vendor/plugin-social-media-links/`
 already exists**, so your edits are never overwritten — note that this is a
 check on the directory, not on individual files, so a template added by a later
 version is not copied in either. To pull in updated templates after an upgrade:
@@ -189,10 +195,11 @@ head
     include /vendor/plugin-social-media-links/fontawesome-cdn-link
 ```
 
-The leading `/` resolves against your `views/` folder, so the same line works
-from any depth — this needs **Nera v4.3.0+**. On older generators use a path
-relative to the including file, which assumes a specific depth; from a layout
-in `views/layouts/` that is:
+The leading `/` resolves against your views folder (`theme/views/`) — there is
+no `theme/` or `views/` segment in the path — so the same line works from any
+depth; this needs **Nera v4.3.0+**. On older generators use a path relative to
+the including file, which assumes a specific depth; from the base layout
+`theme/views/layouts/layout.pug` that is:
 
 ```pug
 include ../vendor/plugin-social-media-links/social-media-links
@@ -325,10 +332,13 @@ Michael Becker
 
 - **Nera**: v4.1.0+ — nothing here needs a generator feature beyond the 4.x
   baseline. The root-absolute include form shown above additionally needs
-  **v4.3.0+**; on older generators use the relative include.
+  **v4.3.0+**; on older generators use the relative include. The `theme/`
+  folder layout used in the paths above — what `nera new` scaffolds — needs
+  v4.6.0+.
 - **Node.js**: >= 20.0.0
 - **Plugin Utils**: `^1.2.0` — `bin/publish-template.js` relies on the
-  project-shape validation `validateNeraProject` gained in 1.2.0
+  project-shape validation `validateNeraProject` gained in 1.2.0. Publishing
+  into `theme/views/vendor/` needs 1.5.0+, which a fresh install resolves
 - **Plugin API**: Uses `getAppData()` to expose `app.socialMediaLinks` and
   `app.socialMediaLinksLabel`. Links are configured via YAML and rendered with
   semantic HTML and accessibility features

@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.2] - 2026-10-08
+
+### Fixed
+
+-   The README now describes the `theme/` site layout that `nera new`
+    scaffolds. Template Publishing showed templates landing in root
+    `views/vendor/plugin-social-media-links/`; it now shows
+    `theme/views/vendor/…`, with one note for sites still on the root-`views/`
+    layout, and the relative-include example names the scaffolded base layout
+    `theme/views/layouts/layout.pug`. Compatibility notes that the `theme/`
+    layout needs Nera v4.6.0+ and themed publishing plugin-utils 1.5.0+
+
 ## [2.2.1] - 2026-07-22
 
 ### Fixed
