@@ -2,6 +2,11 @@
 # Set this if a page has more than one navigation landmark.
 aria_label: Social media
 
+# Links open in a new tab (target="_blank") unless this is false. Opening in
+# the same tab is the accessible default: the visitor decides, and the Back
+# button keeps working (`nera check` rule a11y-target-blank).
+# open_in_new_tab: true
+
 # `icon` is escaped by default. Set `icon_raw: true` on an entry to inject the
 # value as HTML — required for the icon-font markup below, or for an inline
 # SVG. Only do this for values you author yourself.

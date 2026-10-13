@@ -41,6 +41,9 @@ function getAppData(data) {
         ...data?.app,
         socialMediaLinks: entries,
         socialMediaLinksLabel: config.aria_label || DEFAULT_ARIA_LABEL,
+        // Only an explicit `false` turns it off, so an unconfigured site keeps
+        // the `target="_blank"` links it always had.
+        socialMediaLinksNewTab: config.open_in_new_tab !== false,
     }
 }
 

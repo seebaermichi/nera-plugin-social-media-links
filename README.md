@@ -9,13 +9,13 @@ A plugin for the [Nera](https://github.com/seebaermichi/nera) static site genera
 
 ## ✨ Features
 
-- Configurable social media links with FontAwesome icons
+- Configurable social media links with icons (inline SVG, an icon font, or text)
 - BEM CSS methodology for consistent styling
 - Accessible markup with a configurable `aria-label` and semantic HTML
 - Icons escaped by default, with a per-entry opt-in for raw HTML
 - Template publishing system for easy customization
-- Modern FontAwesome 6.5.0 integration
-- Target="\_blank" and security attributes for external links
+- Works with inline SVG icons, a self-hosted icon font, or plain text — no third-party request needed
+- Links open in a new tab by default (`open_in_new_tab`), always with `rel="noopener noreferrer"`
 - Lightweight and zero-runtime overhead
 
 ## 🚀 Installation
@@ -41,6 +41,9 @@ same is true if the list is empty or is not a list.
 ```yaml
 # Optional label for the <nav> element, read by screen readers.
 aria_label: Social media
+
+# Optional; links open in a new tab unless this is false.
+open_in_new_tab: false
 
 social_media_links:
     - name: Facebook
@@ -70,6 +73,12 @@ social_media_links:
 - **`aria_label`**: Label for the `<nav>` element, exposed to templates as
   `app.socialMediaLinksLabel`. Defaults to `Social media`. Set it when a page
   has more than one navigation landmark
+- **`open_in_new_tab`**: `true` (the default) renders every link with
+  `target="_blank"`; `false` opens them in the same tab. Exposed as
+  `app.socialMediaLinksNewTab`. Same-tab is the accessible choice — the
+  visitor decides, and the Back button keeps working — and it is what
+  `nera check`'s `a11y-target-blank` rule asks for. `rel="noopener noreferrer"`
+  is rendered either way
 - **`social_media_links`**: The list of links. Entries that are not mappings —
   a dangling `-` in the YAML, for instance — are ignored
 
@@ -116,7 +125,7 @@ if app.socialMediaLinks && app.socialMediaLinks.length > 0
         ul.social-media-links__list
             each link in app.socialMediaLinks
                 li.social-media-links__item
-                    a.social-media-links__link(href=link.href, title=link.name, target="_blank", rel="noopener noreferrer")
+                    a.social-media-links__link(href=link.href, title=link.name, target=(app.socialMediaLinksNewTab === false ? undefined : '_blank'), rel="noopener noreferrer")
                         if link.icon_raw
                             span.social-media-links__icon !{link.icon}
                         else
@@ -127,7 +136,8 @@ if app.socialMediaLinks && app.socialMediaLinks.length > 0
 ### Available data structure
 
 `app.socialMediaLinksLabel` holds the resolved `aria_label` (default
-`Social media`). Each item in `app.socialMediaLinks` is the YAML entry
+`Social media`), `app.socialMediaLinksNewTab` the resolved `open_in_new_tab`
+(default `true`). Each item in `app.socialMediaLinks` is the YAML entry
 unchanged:
 
 ```javascript
@@ -152,7 +162,7 @@ This copies the templates to:
 ```
 theme/views/vendor/plugin-social-media-links/
 ├── social-media-links.pug
-└── fontawesome-cdn-link.pug
+└── fontawesome-cdn-link.pug   (deprecated, see below)
 ```
 
 That is the destination on a site scaffolded with `nera new`, whose views live
@@ -189,10 +199,6 @@ You can then include them in your layouts:
 ```pug
 // Include social media links
 include /vendor/plugin-social-media-links/social-media-links
-
-// Include FontAwesome CDN in head
-head
-    include /vendor/plugin-social-media-links/fontawesome-cdn-link
 ```
 
 The leading `/` resolves against your views folder (`theme/views/`) — there is
@@ -273,16 +279,25 @@ aside.sidebar
         include /vendor/plugin-social-media-links/social-media-links
 ```
 
-## 🔗 FontAwesome Integration
+## 🔗 Icons without a third-party request
 
-The plugin includes a CDN link template for FontAwesome 6.5.0:
+The icons are whatever `icon` holds, so they need no CDN:
 
-```pug
-head
-    include /vendor/plugin-social-media-links/fontawesome-cdn-link
-```
+- **Inline SVG** (recommended): put the `<svg>` markup in `icon` and set
+  `icon_raw: true`. Simple Icons (simpleicons.org) has the brand logos as SVG.
+  Add `aria-hidden="true"` to the `<svg>`; the visible label names the link.
+- **A self-hosted icon font**: download Font Awesome Free, copy its `css/` and
+  `webfonts/` into `theme/assets/fontawesome/`, and link
+  `/fontawesome/css/all.min.css` from your layout. The `<i class="fab …">`
+  entries above then work unchanged.
+- **Text only**: leave `icon` empty and style `.social-media-links__label`.
 
-This adds the necessary CSS for FontAwesome icons with integrity checking and CORS protection.
+> **Deprecated: `fontawesome-cdn-link.pug`.** The template still ships (it is
+> removed in 3.0.0), but including it makes every visitor's browser load Font
+> Awesome from `cdnjs.cloudflare.com`. That transfers their IP address to a
+> third party, which under the GDPR needs a legal basis and a line in your
+> privacy policy, and `nera check` reports it as `privacy-third-party`. Use one
+> of the options above instead.
 
 ## 🧪 Development
 
@@ -339,10 +354,10 @@ Michael Becker
 - **Plugin Utils**: `^1.2.0` — `bin/publish-template.js` relies on the
   project-shape validation `validateNeraProject` gained in 1.2.0. Publishing
   into `theme/views/vendor/` needs 1.5.0+, which a fresh install resolves
-- **Plugin API**: Uses `getAppData()` to expose `app.socialMediaLinks` and
-  `app.socialMediaLinksLabel`. Links are configured via YAML and rendered with
+- **Plugin API**: Uses `getAppData()` to expose `app.socialMediaLinks`,
+  `app.socialMediaLinksLabel` and `app.socialMediaLinksNewTab`. Links are configured via YAML and rendered with
   semantic HTML and accessibility features
-- **FontAwesome**: 6.5.0+
+- **FontAwesome**: optional; the deprecated CDN template loads 6.5.0
 
 ## 📦 License
 

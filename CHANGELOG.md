@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.0] - 2026-10-13
+
+### Added
+
+-   **`open_in_new_tab`** in `config/social-media-links.yaml`. Links keep
+    opening in a new tab by default (`target="_blank"`, unchanged output);
+    `open_in_new_tab: false` drops the `target`, which is the accessible
+    choice and what `nera check`'s `a11y-target-blank` asks for.
+    `rel="noopener noreferrer"` stays either way. Templates see it as
+    `app.socialMediaLinksNewTab`. A site that published the template before
+    picks this up with `npx nera-social-media-links --force`.
+
+### Deprecated
+
+-   **`fontawesome-cdn-link.pug`** loads Font Awesome from
+    `cdnjs.cloudflare.com`, a third-party request on every page view (GDPR;
+    `privacy-third-party` in `nera check`). It still ships and works, and is
+    removed in 3.0.0. The README now shows inline SVG icons and a
+    self-hosted Font Awesome instead.
+
 ## [2.2.2] - 2026-10-08
 
 ### Fixed

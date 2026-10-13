@@ -167,6 +167,26 @@ describe('aria label', () => {
     })
 })
 
+describe('open_in_new_tab', () => {
+    it('keeps target="_blank" by default', () => {
+        expect(render(getAppData({ app: {} }))).toContain('target="_blank"')
+    })
+
+    it('drops the target when set to false, keeping rel', () => {
+        writeConfig(`open_in_new_tab: false\n${CONFIG_YAML}`)
+        const html = render(getAppData({ app: {} }))
+
+        expect(html).not.toContain('target=')
+        expect(html).toContain('rel="noopener noreferrer"')
+    })
+
+    it('keeps the target for any value other than false', () => {
+        writeConfig(`open_in_new_tab: true\n${CONFIG_YAML}`)
+
+        expect(render(getAppData({ app: {} }))).toContain('target="_blank"')
+    })
+})
+
 describe('icon escaping', () => {
     it('escapes an icon value by default', () => {
         writeConfig(
