@@ -8,8 +8,8 @@
         ".": "./index.js"
     },
     "bin": {
-        "publish-template": "./bin/publish-template.js",
-        "nera-social-media-links": "./bin/publish-template.js"
+        "publish-template": "bin/publish-template.js",
+        "nera-social-media-links": "bin/publish-template.js"
     },
     "scripts": {
         "test": "vitest",
@@ -38,7 +38,7 @@
     "license": "MIT",
     "repository": {
         "type": "git",
-        "url": "https://github.com/seebaermichi/nera-plugin-social-media-links"
+        "url": "git+https://github.com/seebaermichi/nera-plugin-social-media-links.git"
     },
     "bugs": {
         "url": "https://github.com/seebaermichi/nera-plugin-social-media-links/issues"
