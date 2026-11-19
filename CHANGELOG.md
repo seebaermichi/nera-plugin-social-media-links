@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.1] - 2026-11-19
+
+### Fixed
+
+-   The shipped `config/social-media-links.yaml` no longer lists five placeholder accounts (`https://facebook.com/yourpage`, …). `nera add social-media-links` copies that file into a site that has none, which rendered dead links on every page. The list is now a commented-out example, and nothing renders until the site adds its own. A site that got the file that way should replace or delete those entries.
+
 ## [2.3.0] - 2026-10-13
 
 ### Added
